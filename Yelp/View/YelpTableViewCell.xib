@@ -87,16 +87,13 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="address" destination="xvB-ZQ-4yS" id="xGU-qW-YDb"/>
-                <outlet property="addressLabel" destination="xvB-ZQ-4yS" id="hdk-jg-Qpy"/>
-                <outlet property="category" destination="bZ9-wj-jEa" id="HcM-fR-lzy"/>
-                <outlet property="costLabel" destination="j8y-Yw-T77" id="i1H-gR-R6T"/>
-                <outlet property="dollarLabel" destination="j8y-Yw-T77" id="YrN-c7-rHp"/>
-                <outlet property="ratingImage" destination="OqD-wK-eFd" id="lnW-kU-d62"/>
-                <outlet property="restaurantImage" destination="5M1-jB-mLc" id="HLe-5c-cfo"/>
-                <outlet property="restaurantName" destination="bXY-OU-O5i" id="p4a-iG-oRA"/>
-                <outlet property="reviewLabel" destination="gAe-UP-B2Y" id="FUg-OF-cZv"/>
-                <outlet property="reviews" destination="gAe-UP-B2Y" id="bN8-sP-424"/>
+                <outlet property="addressLabel" destination="xvB-ZQ-4yS" id="axF-kx-LDk"/>
+                <outlet property="category" destination="bZ9-wj-jEa" id="6Dr-QI-h61"/>
+                <outlet property="costLabel" destination="j8y-Yw-T77" id="fFo-AZ-J5Z"/>
+                <outlet property="ratingImage" destination="OqD-wK-eFd" id="1VK-31-7id"/>
+                <outlet property="restaurantImage" destination="5M1-jB-mLc" id="Ryd-PD-2an"/>
+                <outlet property="restaurantName" destination="bXY-OU-O5i" id="2ZL-ei-fsx"/>
+                <outlet property="reviewLabel" destination="gAe-UP-B2Y" id="2xI-Cz-JD6"/>
             </connections>
             <point key="canvasLocation" x="33.5" y="54"/>
         </tableViewCell>

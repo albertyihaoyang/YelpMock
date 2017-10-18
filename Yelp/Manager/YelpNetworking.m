@@ -9,10 +9,10 @@
 #import "YelpNetworking.h"
 
 typedef void (^TokenPendingTask)(NSString *token);
-static NSString const * kGrantType = @"client_credentials";
-static NSString const * kClient_id = @"D5mFlV6EbK-gLCgVTJHAFQ";
-static NSString const * kClient_secret = @"8Rl7jaC4qYr4OJgcnB2KyjgBR7muu9WfpCkZyvxSAqjMvcHoQEZtdhCasVtRltnS";
-static NSString const * kTokenEndPoint = @"https://api.yelp.com/oauth2/token";
+static NSString * const kGrantType = @"client_credentials";
+static NSString * const kClient_id = @"D5mFlV6EbK-gLCgVTJHAFQ";
+static NSString * const kClient_secret = @"8Rl7jaC4qYr4OJgcnB2KyjgBR7muu9WfpCkZyvxSAqjMvcHoQEZtdhCasVtRltnS";
+static NSString * const kTokenEndPoint = @"https://api.yelp.com/oauth2/token";
 @interface YelpNetworking ()
 @property (copy) NSString *token;
 @end

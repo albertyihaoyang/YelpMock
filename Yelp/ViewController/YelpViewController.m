@@ -49,13 +49,13 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     
-    [self.tableView registerNib:[UINib nibWithNibName:@"YelpTableViewCell" bundle:nil] forCellReuseIdentifier:YelpTableViewCellIdenitfier];
+    [self.tableView registerNib:[UINib nibWithNibName:@"YelpTableViewCell" bundle:nil] forCellReuseIdentifier:@"YelpTableViewCell"];
 }
 
 - (void)loadYelpData
 {
     __weak typeof(self) weakSelf = self;
-    CLLocation *location = [[CLLocation alloc] initWithLatitude:37.3263625 longitude:-122.027210];
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:34.0214944 longitude:-118.2892411];
     [[YelpNetworking sharedInstance] fetchRestaurantsBasedOnLocation:location term:@"restaurant" completionBlock:^(NSArray<YelpDataModel *> *dataModelArray) {
         weakSelf.dataModels = dataModelArray;
         dispatch_async(dispatch_get_main_queue(), ^{
