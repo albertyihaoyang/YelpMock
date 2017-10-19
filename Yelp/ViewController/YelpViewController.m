@@ -7,19 +7,24 @@
 //
 
 
+
+
 #import "YelpViewController.h"
 #import "YelpDataModel.h"
 #import "YelpNetworking.h"
 #import "YelpTableViewCell.h"
-
-static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
+#import "YelpDataStore.h"
 @import MapKit;
 
-@interface YelpViewController () <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate>
+static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
+
+
+@interface YelpViewController () <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, CLLocationManagerDelegate>
 
 @property (nonatomic) UITableView *tableView;
 @property (nonatomic, copy) NSArray<YelpDataModel *> *dataModels;
 @property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic, strong) CLLocationManager *locationManager;
 
 @end
 
@@ -30,6 +35,11 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     
     [self setupUI];
     [self loadYelpData];
+    
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager requestWhenInUseAuthorization];
+    [self.locationManager startUpdatingLocation];
 }
 
 - (void)setupUI
@@ -39,7 +49,14 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     self.tableView.dataSource = self;
     [self.view addSubview:self.tableView];
     
+    //add constraint
+    self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
+    [self.tableView.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.tableView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
     
+    [self.tableView registerNib:[UINib nibWithNibName:@"YelpTableViewCell" bundle:nil] forCellReuseIdentifier:YelpTableViewCellIdenitfier];
     
     // Setup search bar
     self.searchBar = [[UISearchBar alloc] init];
@@ -49,13 +66,12 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings"] style:UIBarButtonItemStylePlain target:self action:@selector(didTapSettings)];
     
-    [self.tableView registerNib:[UINib nibWithNibName:@"YelpTableViewCell" bundle:nil] forCellReuseIdentifier:@"YelpTableViewCell"];
 }
 
 - (void)loadYelpData
 {
     __weak typeof(self) weakSelf = self;
-    CLLocation *location = [[CLLocation alloc] initWithLatitude:34.0214944 longitude:-118.2892411];
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:37.3263625 longitude:-122.027210];
     [[YelpNetworking sharedInstance] fetchRestaurantsBasedOnLocation:location term:@"restaurant" completionBlock:^(NSArray<YelpDataModel *> *dataModelArray) {
         weakSelf.dataModels = dataModelArray;
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -93,4 +109,61 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     return cell;
 }
 
+#pragma mark - UISearchBarDelegate
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    [searchBar setShowsCancelButton:YES animated:YES];
+    return YES;
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar setShowsCancelButton:NO animated:YES];
+    [searchBar resignFirstResponder];
+    [self.view endEditing:YES];
+    CLLocation *loc = [[CLLocation alloc] initWithLatitude:37.3263625 longitude:-122.027210];
+    
+    // the following code the key that we can finally make our table be able to search based on user’s input
+    __weak typeof(self) weakSelf = self;
+    [[YelpNetworking sharedInstance] fetchRestaurantsBasedOnLocation:loc term:searchBar.text completionBlock:^(NSArray<YelpDataModel *> *dataModelArray) {
+        weakSelf.dataModels = dataModelArray;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.tableView reloadData];
+        });
+        
+    }];
+}
+
+
+// Reset search bar state after cancel button clicked
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [searchBar setShowsCancelButton:NO animated:YES];
+    [searchBar resignFirstResponder];
+    [self.view endEditing:YES];
+}
+
+#pragma mark - Location manager methods
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+    CLLocation *currentLocation = newLocation;
+    
+    [[YelpDataStore sharedInstance] setUserLocation:currentLocation];
+    
+    [manager stopUpdatingLocation];
+    NSLog(@"current location %lf %lf", currentLocation.coordinate.latitude, currentLocation.coordinate.longitude);
+    [[YelpNetworking sharedInstance] fetchRestaurantsBasedOnLocation:currentLocation term:@"restaurant" completionBlock:^(NSArray<YelpDataModel *> *dataModelArray) {
+        self.dataModels = dataModelArray;
+        
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.tableView reloadData];
+        });
+    }];
+    
+}
+
 @end
+

@@ -8,8 +8,9 @@
 
 #import "AppDelegate.h"
 #import <MapKit/MapKit.h>
-#import "YelpNetworking.h"
 #import "YelpViewController.h"
+#import "MapViewController.h"
+
 
 @interface AppDelegate ()
 
@@ -19,7 +20,6 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
@@ -35,12 +35,11 @@
     [nvc1.navigationBar
      setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
     
-    UIViewController *svc2 = [[UIViewController alloc] init];
-    UINavigationController *nvc2 = [[UINavigationController alloc] initWithRootViewController:svc2];
-    nvc2.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Map" image: [UIImage imageNamed:@"map"] tag:0];
+    MapViewController *mapVC = [[MapViewController alloc] init];
+    mapVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Map" image: [UIImage imageNamed:@"map"] tag:0];
     UITabBarController *tbc = [[UITabBarController alloc] init];
     
-    [tbc setViewControllers:@[nvc1,nvc2]];
+    [tbc setViewControllers:@[nvc1,mapVC]];
     
     self.window.rootViewController = tbc;
     self.window.backgroundColor = [UIColor whiteColor];
@@ -78,3 +77,4 @@
 
 
 @end
+

@@ -27,3 +27,4 @@
 + (NSArray <YelpDataModel *>*)buildDataModelArrayFromDictionaryArray:(NSArray<NSDictionary *> *)dictArray;
 @end
 
+
