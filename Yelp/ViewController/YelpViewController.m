@@ -8,12 +8,12 @@
 
 
 
-
 #import "YelpViewController.h"
 #import "YelpDataModel.h"
 #import "YelpNetworking.h"
 #import "YelpTableViewCell.h"
 #import "YelpDataStore.h"
+#import "YelpDetailViewController.h"
 @import MapKit;
 
 static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
@@ -122,9 +122,12 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     [searchBar setShowsCancelButton:NO animated:YES];
     [searchBar resignFirstResponder];
     [self.view endEditing:YES];
-    CLLocation *loc = [[CLLocation alloc] initWithLatitude:37.3263625 longitude:-122.027210];
+    CLLocation *loc = [[YelpDataStore sharedInstance] userLocation];
+    if (!loc) {
+        loc = [[CLLocation alloc] initWithLatitude:37.3263625 longitude:-122.027210];
+    }
+    // the following code is the key that we can finally make our table be able to search based on user’s input
     
-    // the following code the key that we can finally make our table be able to search based on user’s input
     __weak typeof(self) weakSelf = self;
     [[YelpNetworking sharedInstance] fetchRestaurantsBasedOnLocation:loc term:searchBar.text completionBlock:^(NSArray<YelpDataModel *> *dataModelArray) {
         weakSelf.dataModels = dataModelArray;
@@ -132,10 +135,8 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.tableView reloadData];
         });
-        
     }];
 }
-
 
 // Reset search bar state after cancel button clicked
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
@@ -165,5 +166,13 @@ static NSString * const YelpTableViewCellIdenitfier = @"YelpTableViewCell";
     
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    YelpDetailViewController *detailVC = [[YelpDetailViewController alloc] initWithDataModel:self.dataModels[indexPath.row]];
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
+
+
 @end
+
 
